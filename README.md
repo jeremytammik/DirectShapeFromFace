@@ -13,7 +13,7 @@ Jeremy Tammik,
 [The Building Coder](http://thebuildingcoder.typepad.com),
 [ADN](http://www.autodesk.com/adn)
 [Open](http://www.autodesk.com/adnopen),
-[Autodesk Inc.](http://www.autodesk.com).
+[Autodesk Inc.](http://www.autodesk.com)
 
 
 ## License
