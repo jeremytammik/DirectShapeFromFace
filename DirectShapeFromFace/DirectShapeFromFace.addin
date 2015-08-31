@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command DirectShapeFromFace</Text>
+    <Description>Some description for DirectShapeFromFace</Description>
+    <Assembly>DirectShapeFromFace.dll</Assembly>
+    <FullClassName>DirectShapeFromFace.Command</FullClassName>
+    <ClientId>d83c5a3b-56eb-4ff1-a3fb-a8c98aa73943</ClientId>
+    <VendorId>com.typepad.thebuildingcoder</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
