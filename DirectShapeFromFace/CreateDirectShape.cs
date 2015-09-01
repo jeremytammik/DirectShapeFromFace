@@ -266,6 +266,17 @@ namespace DirectShapeFromFace
             }
           }
 
+          FamilyInstance fi = el as FamilyInstance;
+
+          if( null != fi )
+          {
+            // Will this handle a face selected
+            // in a nested family instance?
+            // Some, yes, but not all.
+
+            t = fi.GetTransform();
+          }
+
           Mesh mesh = face.Triangulate();
 
           if( null != t )

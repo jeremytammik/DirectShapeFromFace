@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 // 2015-09-01 2016.0.0.1 display original geometry location using model lines and existing sketch planes
 // 2015-09-01 2016.0.0.2 started exploring geometry instance transformations
 // 2015-09-01 2016.0.0.2 implemented GetTransformStackForObject to no avail
+// 2015-09-01 2016.0.0.2 applied FamilyInstance.GetTransform
 //
 [assembly: AssemblyVersion( "2016.0.0.2" )]
 [assembly: AssemblyFileVersion( "2016.0.0.2" )]
