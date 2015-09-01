@@ -136,6 +136,73 @@ namespace DirectShapeFromFace
       }
     }
 
+    /// <summary>
+    /// Determine the stack of transforms to apply to 
+    /// the given target geometry object to bring it 
+    /// to the proper location in the project coordinates.
+    /// Unfortunetely, we have not found any way at all 
+    /// yet to identify the target object we are after.
+    /// </summary>
+    static bool GetTransformStackForObject(
+      Stack<Transform> tstack,
+      GeometryElement geo,
+      GeometryObject targetObj,
+      Reference targetRef )
+    {
+      foreach( GeometryObject obj in geo )
+      {
+        if( obj == targetObj )
+        {
+          return true;
+        }
+
+        GeometryInstance gi = obj as GeometryInstance;
+
+        if( null != gi )
+        {
+          tstack.Push( gi.Transform );
+
+          return GetTransformStackForObject( tstack,
+            gi.GetInstanceGeometry(), targetObj, targetRef );
+        }
+
+        Solid solid = obj as Solid;
+
+        if( null != solid )
+        {
+          if( 0 < solid.Faces.Size )
+          {
+            foreach( Face face in solid.Faces )
+            {
+              if( face == targetObj )
+              {
+                return true;
+              }
+              if( face.Reference == targetRef )
+              {
+                return true;
+              }
+            }
+          }
+          if( 0 < solid.Edges.Size )
+          {
+            foreach( Edge edge in solid.Edges )
+            {
+              if( edge == targetObj )
+              {
+                return true;
+              }
+              if( edge.Reference == targetRef )
+              {
+                return true;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+
     public static void Execute(
       ExternalCommandData commandData )
     {
@@ -149,11 +216,13 @@ namespace DirectShapeFromFace
       {
         Selection choices = uidoc.Selection;
 
-        Reference reference = choices.PickObject(
+        Reference faceref = choices.PickObject(
           ObjectType.Face );
 
+        Debug.Print( "Face reference picked: " + faceref.ConvertToStableRepresentation( doc ) );
+
         Element el = doc.GetElement(
-          reference.ElementId );
+          faceref.ElementId );
 
         using( trans = new Transaction( doc ) )
         {
@@ -171,9 +240,12 @@ namespace DirectShapeFromFace
           // with the instance transformation applied.
 
           Face face = el.GetGeometryObjectFromReference(
-            reference ) as Face;
+            faceref ) as Face;
 
-          Debug.Print( "Face " + face.Reference.ConvertToStableRepresentation( doc ) );
+          Debug.Print( "Face reference property: " 
+            + ((null == face.Reference)
+              ? "<nil>" 
+              : face.Reference.ConvertToStableRepresentation( doc )) );
 
           Transform t = null;
 
@@ -181,17 +253,16 @@ namespace DirectShapeFromFace
           opt.ComputeReferences = true;
           GeometryElement geo = el.get_Geometry( opt );
           GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
-          foreach( GeometryObject obj in geo )
-          {
-            //if( obj == face )
-            //{
-            //  break;
-            //}
+          Stack<Transform> tstack = new Stack<Transform>();
 
-            GeometryInstance gi = obj as GeometryInstance;
-            if( null != gi )
+          if( GetTransformStackForObject( tstack, geo, face, faceref )
+            && 0 < tstack.Count )
+          {
+            t = Transform.Identity;
+
+            while( 0 < tstack.Count )
             {
-              t = gi.Transform;
+              t *= tstack.Pop();
             }
           }
 
