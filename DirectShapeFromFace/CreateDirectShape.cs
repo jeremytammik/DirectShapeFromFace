@@ -78,8 +78,8 @@ namespace DirectShapeFromFace
       Plane plane = sketchPlane.GetPlane();
 
       return plane.Normal.IsAlmostEqualTo( normal )
-        && IsAlmostZero( SignedDistanceTo( plane, origin ) );
-
+        && IsAlmostZero( SignedDistanceTo( 
+          plane, origin ) );
     }
 
     static int _sketch_plane_creation_counter = 0;
@@ -164,14 +164,48 @@ namespace DirectShapeFromFace
 
           builder.OpenConnectedFaceSet( false );
 
+          // This may return a face in the family 
+          // symbol definition with no family instance 
+          // transform applied. Use the GeometryElement
+          // GetTransformed method to retrieve the face 
+          // with the instance transformation applied.
+
           Face face = el.GetGeometryObjectFromReference(
             reference ) as Face;
 
+          Debug.Print( "Face " + face.Reference.ConvertToStableRepresentation( doc ) );
+
+          Transform t = null;
+
+          Options opt = new Options();
+          opt.ComputeReferences = true;
+          GeometryElement geo = el.get_Geometry( opt );
+          GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
+          foreach( GeometryObject obj in geo )
+          {
+            //if( obj == face )
+            //{
+            //  break;
+            //}
+
+            GeometryInstance gi = obj as GeometryInstance;
+            if( null != gi )
+            {
+              t = gi.Transform;
+            }
+          }
+
           Mesh mesh = face.Triangulate();
+
+          if( null != t )
+          {
+            mesh = mesh.get_Transformed( t );
+          }
 
           //List<XYZ> args = new List<XYZ>( 3 );
 
           XYZ offset = new XYZ();
+
           if( el.Location is LocationPoint )
           {
             LocationPoint locationPoint = el.Location

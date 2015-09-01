@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 //
 // 2015-08-31 2016.0.0.0 initial commit using offset works for some columns
 // 2015-09-01 2016.0.0.1 display original geometry location using model lines and existing sketch planes
+// 2015-09-01 2016.0.0.2 started exploring geometry instance transformations
 //
-[assembly: AssemblyVersion( "2016.0.0.1" )]
-[assembly: AssemblyFileVersion( "2016.0.0.1" )]
+[assembly: AssemblyVersion( "2016.0.0.2" )]
+[assembly: AssemblyFileVersion( "2016.0.0.2" )]
