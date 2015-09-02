@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 // 2015-09-01 2016.0.0.2 started exploring geometry instance transformations
 // 2015-09-01 2016.0.0.2 implemented GetTransformStackForObject to no avail
 // 2015-09-01 2016.0.0.2 applied FamilyInstance.GetTransform
+// 2015-09-02 2016.0.0.3 applied FamilyInstance.GetTotalTransform
 //
-[assembly: AssemblyVersion( "2016.0.0.2" )]
-[assembly: AssemblyFileVersion( "2016.0.0.2" )]
+[assembly: AssemblyVersion( "2016.0.0.3" )]
+[assembly: AssemblyFileVersion( "2016.0.0.3" )]
