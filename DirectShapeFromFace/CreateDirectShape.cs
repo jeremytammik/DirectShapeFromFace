@@ -161,15 +161,17 @@ namespace DirectShapeFromFace
     static bool GetTransformStackForObject(
       Stack<Transform> tstack,
       GeometryElement geo,
-      GeometryObject targetObj,
-      Reference targetRef )
+      Document doc,
+      string stable_representation )
+      //GeometryObject targetObj,
+      //Reference targetRef 
     {
       foreach( GeometryObject obj in geo )
       {
-        if( obj == targetObj )
-        {
-          return true;
-        }
+        //if( obj == targetObj )
+        //{
+        //  return true;
+        //}
 
         GeometryInstance gi = obj as GeometryInstance;
 
@@ -178,22 +180,32 @@ namespace DirectShapeFromFace
           tstack.Push( gi.Transform );
 
           return GetTransformStackForObject( tstack,
-            gi.GetInstanceGeometry(), targetObj, targetRef );
+            gi.GetInstanceGeometry(), doc, 
+            stable_representation );
         }
 
         Solid solid = obj as Solid;
 
         if( null != solid )
         {
+          string rep;
+
           if( 0 < solid.Faces.Size )
           {
             foreach( Face face in solid.Faces )
             {
-              if( face == targetObj )
-              {
-                return true;
-              }
-              if( face.Reference == targetRef )
+              //if( face == targetObj )
+              //{
+              //  return true;
+              //}
+              //if( face.Reference == targetRef )
+              //{
+              //  return true;
+              //}
+              rep = face.Reference
+                .ConvertToStableRepresentation( doc );
+
+              if( rep.Equals( stable_representation ) )
               {
                 return true;
               }
@@ -203,11 +215,18 @@ namespace DirectShapeFromFace
           {
             foreach( Edge edge in solid.Edges )
             {
-              if( edge == targetObj )
-              {
-                return true;
-              }
-              if( edge.Reference == targetRef )
+              //if( edge == targetObj )
+              //{
+              //  return true;
+              //}
+              //if( edge.Reference == targetRef )
+              //{
+              //  return true;
+              //}
+              rep = edge.Reference
+                .ConvertToStableRepresentation( doc );
+
+              if( rep.Equals( stable_representation ) )
               {
                 return true;
               }
@@ -234,7 +253,11 @@ namespace DirectShapeFromFace
         Reference faceref = choices.PickObject(
           ObjectType.Face );
 
-        Debug.Print( "Face reference picked: " + faceref.ConvertToStableRepresentation( doc ) );
+        string rep = faceref
+          .ConvertToStableRepresentation( doc );
+
+        Debug.Print( "Face reference picked: " 
+          + rep );
 
         Element el = doc.GetElement(
           faceref.ElementId );
@@ -270,7 +293,7 @@ namespace DirectShapeFromFace
           GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
           Stack<Transform> tstack = new Stack<Transform>();
 
-          if( GetTransformStackForObject( tstack, geo, face, faceref )
+          if( GetTransformStackForObject( tstack, geo, doc, rep )
             && 0 < tstack.Count )
           {
             t = Transform.Identity;
