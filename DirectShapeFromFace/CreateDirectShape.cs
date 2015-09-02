@@ -163,16 +163,12 @@ namespace DirectShapeFromFace
       GeometryElement geo,
       Document doc,
       string stable_representation )
-      //GeometryObject targetObj,
-      //Reference targetRef 
     {
+      Debug.Print( "enter GetTransformStackForObject "
+        + "with tstack count {0}", tstack.Count );
+
       foreach( GeometryObject obj in geo )
       {
-        //if( obj == targetObj )
-        //{
-        //  return true;
-        //}
-
         GeometryInstance gi = obj as GeometryInstance;
 
         if( null != gi )
@@ -180,7 +176,7 @@ namespace DirectShapeFromFace
           tstack.Push( gi.Transform );
 
           return GetTransformStackForObject( tstack,
-            gi.GetInstanceGeometry(), doc, 
+            gi.GetSymbolGeometry(), doc, 
             stable_representation );
         }
 
@@ -190,45 +186,38 @@ namespace DirectShapeFromFace
         {
           string rep;
 
-          if( 0 < solid.Faces.Size )
-          {
-            foreach( Face face in solid.Faces )
-            {
-              //if( face == targetObj )
-              //{
-              //  return true;
-              //}
-              //if( face.Reference == targetRef )
-              //{
-              //  return true;
-              //}
-              rep = face.Reference
-                .ConvertToStableRepresentation( doc );
+          bool isFace = stable_representation.EndsWith( 
+            "SURFACE" );
 
-              if( rep.Equals( stable_representation ) )
+          if( isFace )
+          {
+            if( 0 < solid.Faces.Size )
+            {
+              foreach( Face face in solid.Faces )
               {
-                return true;
+                rep = face.Reference
+                  .ConvertToStableRepresentation( doc );
+
+                if( rep.Equals( stable_representation ) )
+                {
+                  return true;
+                }
               }
             }
           }
-          if( 0 < solid.Edges.Size )
+          else
           {
-            foreach( Edge edge in solid.Edges )
+            if( 0 < solid.Edges.Size )
             {
-              //if( edge == targetObj )
-              //{
-              //  return true;
-              //}
-              //if( edge.Reference == targetRef )
-              //{
-              //  return true;
-              //}
-              rep = edge.Reference
-                .ConvertToStableRepresentation( doc );
-
-              if( rep.Equals( stable_representation ) )
+              foreach( Edge edge in solid.Edges )
               {
-                return true;
+                rep = edge.Reference
+                  .ConvertToStableRepresentation( doc );
+
+                if( rep.Equals( stable_representation ) )
+                {
+                  return true;
+                }
               }
             }
           }
@@ -287,23 +276,6 @@ namespace DirectShapeFromFace
 
           Transform t = null;
 
-          Options opt = new Options();
-          opt.ComputeReferences = true;
-          GeometryElement geo = el.get_Geometry( opt );
-          GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
-          Stack<Transform> tstack = new Stack<Transform>();
-
-          if( GetTransformStackForObject( tstack, geo, doc, rep )
-            && 0 < tstack.Count )
-          {
-            t = Transform.Identity;
-
-            while( 0 < tstack.Count )
-            {
-              t *= tstack.Pop();
-            }
-          }
-
           FamilyInstance fi = el as FamilyInstance;
 
           if( null != fi )
@@ -317,7 +289,28 @@ namespace DirectShapeFromFace
             // This also works for some instances
             // but not all.
 
-            t = fi.GetTotalTransform();
+            Transform t1 = fi.GetTotalTransform();
+
+            Options opt = new Options();
+            opt.ComputeReferences = true;
+            GeometryElement geo = el.get_Geometry( opt );
+            GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
+            Stack<Transform> tstack = new Stack<Transform>();
+
+            if( GetTransformStackForObject( tstack, geo, doc, rep )
+              && 0 < tstack.Count )
+            {
+              Debug.Print( "GetTransformStackForObject "
+                + "returned true with tstack count {0}",
+                tstack.Count );
+
+              t = Transform.Identity;
+
+              while( 0 < tstack.Count )
+              {
+                t *= tstack.Pop();
+              }
+            }
           }
 
           Mesh mesh = face.Triangulate();
