@@ -11,6 +11,9 @@ namespace DirectShapeFromFace
 {
   class CreateDirectShape
   {
+    const string _sketch_plane_name_prefix 
+      = "The Building Coder";
+
     #region Geometrical Comparison
     const double _eps = 1.0e-9;
 
@@ -70,16 +73,28 @@ namespace DirectShapeFromFace
       return plane.Normal.DotProduct( v );
     }
 
+    /// <summary>
+    /// Return true if the sketch plane belongs to us
+    /// and its origin and normal vector match the 
+    /// given targets.
+    /// </summary>
     static bool SketchPlaneMatches(
       SketchPlane sketchPlane,
       XYZ origin,
       XYZ normal )
     {
-      Plane plane = sketchPlane.GetPlane();
+      bool rc = sketchPlane.Name.StartsWith( 
+        _sketch_plane_name_prefix );
 
-      return plane.Normal.IsAlmostEqualTo( normal )
-        && IsAlmostZero( SignedDistanceTo( 
-          plane, origin ) );
+      if( rc )
+      {
+        Plane plane = sketchPlane.GetPlane();
+
+        rc = plane.Normal.IsAlmostEqualTo( normal )
+          && IsAlmostZero( SignedDistanceTo(
+            plane, origin ) );
+      }
+      return rc;
     }
 
     static int _sketch_plane_creation_counter = 0;
@@ -274,7 +289,12 @@ namespace DirectShapeFromFace
             // in a nested family instance?
             // Some, yes, but not all.
 
-            t = fi.GetTransform();
+            //t = fi.GetTransform();
+
+            // This also works for some instances
+            // but not all.
+
+            t = fi.GetTotalTransform();
           }
 
           Mesh mesh = face.Triangulate();
