@@ -41,6 +41,7 @@ using System.Runtime.InteropServices;
 // 2015-09-02 2016.0.0.3 applied FamilyInstance.GetTotalTransform
 // 2015-09-02 2016.0.0.4 reimplemented GetTransformStackForObject using stable_representation
 // 2015-09-02 2016.0.0.5 use GetSymbolGeometry instead of GetInstanceGeometry to compare stable_representation
+// 2015-09-03 2016.0.0.6 tested sketch plane reuse; it never happens, because the name always remains '<not associated>'
 //
 [assembly: AssemblyVersion( "2016.0.0.5" )]
 [assembly: AssemblyFileVersion( "2016.0.0.5" )]

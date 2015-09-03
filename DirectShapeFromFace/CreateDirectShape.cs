@@ -11,7 +11,7 @@ namespace DirectShapeFromFace
 {
   class CreateDirectShape
   {
-    const string _sketch_plane_name_prefix 
+    const string _sketch_plane_name_prefix
       = "The Building Coder";
 
     #region Geometrical Comparison
@@ -83,7 +83,7 @@ namespace DirectShapeFromFace
       XYZ origin,
       XYZ normal )
     {
-      bool rc = sketchPlane.Name.StartsWith( 
+      bool rc = sketchPlane.Name.StartsWith(
         _sketch_plane_name_prefix );
 
       if( rc )
@@ -109,23 +109,30 @@ namespace DirectShapeFromFace
       XYZ origin,
       XYZ normal )
     {
+      string s = "reusing";
+
       SketchPlane sketchPlane
         = new FilteredElementCollector( doc )
           .OfClass( typeof( SketchPlane ) )
           .Cast<SketchPlane>()
-          .FirstOrDefault<SketchPlane>( x => 
+          .FirstOrDefault<SketchPlane>( x =>
             SketchPlaneMatches( x, origin, normal ) );
 
       if( null == sketchPlane )
       {
         Plane plane = new Plane( normal, origin );
-        
+
         sketchPlane = SketchPlane.Create( doc, plane );
 
-        sketchPlane.Name = string.Format( 
-          "The Building Coder {0}", 
+        sketchPlane.Name = string.Format(
+          "{0} {1}", _sketch_plane_name_prefix,
           _sketch_plane_creation_counter++ );
+
+        s = "created";
       }
+      Debug.Print( "GetSketchPlane: {0} '{1}'",
+        s, sketchPlane.Name );
+
       return sketchPlane;
     }
 
@@ -137,16 +144,16 @@ namespace DirectShapeFromFace
       SketchPlane sketchPlane,
       XYZ[] corners )
     {
-      Autodesk.Revit.Creation.Document factory 
+      Autodesk.Revit.Creation.Document factory
         = sketchPlane.Document.Create;
 
       int n = corners.GetLength( 0 );
-      
+
       for( int i = 0; i < n; ++i )
       {
         int j = 0 == i ? n - 1 : i - 1;
 
-        factory.NewModelCurve( Line.CreateBound( 
+        factory.NewModelCurve( Line.CreateBound(
           corners[j], corners[i] ), sketchPlane );
       }
     }
@@ -176,7 +183,7 @@ namespace DirectShapeFromFace
           tstack.Push( gi.Transform );
 
           return GetTransformStackForObject( tstack,
-            gi.GetSymbolGeometry(), doc, 
+            gi.GetSymbolGeometry(), doc,
             stable_representation );
         }
 
@@ -186,7 +193,7 @@ namespace DirectShapeFromFace
         {
           string rep;
 
-          bool isFace = stable_representation.EndsWith( 
+          bool isFace = stable_representation.EndsWith(
             "SURFACE" );
 
           if( isFace )
@@ -245,7 +252,7 @@ namespace DirectShapeFromFace
         string rep = faceref
           .ConvertToStableRepresentation( doc );
 
-        Debug.Print( "Face reference picked: " 
+        Debug.Print( "Face reference picked: "
           + rep );
 
         Element el = doc.GetElement(
@@ -269,10 +276,10 @@ namespace DirectShapeFromFace
           Face face = el.GetGeometryObjectFromReference(
             faceref ) as Face;
 
-          Debug.Print( "Face reference property: " 
-            + ((null == face.Reference)
-              ? "<nil>" 
-              : face.Reference.ConvertToStableRepresentation( doc )) );
+          Debug.Print( "Face reference property: "
+            + ( ( null == face.Reference )
+              ? "<nil>"
+              : face.Reference.ConvertToStableRepresentation( doc ) ) );
 
           Transform t = null;
 
