@@ -14,6 +14,9 @@ namespace DirectShapeFromFace
     const string _sketch_plane_name_prefix
       = "The Building Coder";
 
+    const string _sketch_plane_name_prefix2
+      = "<not associated>";
+
     #region Geometrical Comparison
     const double _eps = 1.0e-9;
 
@@ -77,14 +80,22 @@ namespace DirectShapeFromFace
     /// Return true if the sketch plane belongs to us
     /// and its origin and normal vector match the 
     /// given targets.
+    /// Nope, we are unable to set the sketch plane 
+    /// name. However, Revit throws an exception if 
+    /// we try to draw on the skatch plane named
+    /// 'Level 1', so lets ensure we use '<not 
+    /// associated>'.
     /// </summary>
     static bool SketchPlaneMatches(
       SketchPlane sketchPlane,
       XYZ origin,
       XYZ normal )
     {
-      bool rc = sketchPlane.Name.StartsWith(
-        _sketch_plane_name_prefix );
+      //bool rc = sketchPlane.Name.StartsWith(
+      //  _sketch_plane_name_prefix );
+
+      bool rc = sketchPlane.Name.Equals(
+        _sketch_plane_name_prefix2 );
 
       if( rc )
       {
@@ -124,9 +135,9 @@ namespace DirectShapeFromFace
 
         sketchPlane = SketchPlane.Create( doc, plane );
 
-        sketchPlane.Name = string.Format(
-          "{0} {1}", _sketch_plane_name_prefix,
-          _sketch_plane_creation_counter++ );
+        //sketchPlane.Name = string.Format(
+        //  "{0} {1}", _sketch_plane_name_prefix,
+        //  _sketch_plane_creation_counter++ );
 
         s = "created";
       }
