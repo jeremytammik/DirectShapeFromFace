@@ -43,6 +43,7 @@ using System.Runtime.InteropServices;
 // 2015-09-02 2016.0.0.5 use GetSymbolGeometry instead of GetInstanceGeometry to compare stable_representation
 // 2015-09-03 2016.0.0.6 tested sketch plane reuse; it never happens, because the name always remains '<not associated>'
 // 2015-09-03 2016.0.0.7 reuse of '<not associated>' sketch plane works fine
+// 2015-09-04 2016.0.0.8 added better check for face or edge searching geometric target element
 //
-[assembly: AssemblyVersion( "2016.0.0.7" )]
-[assembly: AssemblyFileVersion( "2016.0.0.7" )]
+[assembly: AssemblyVersion( "2016.0.0.8" )]
+[assembly: AssemblyFileVersion( "2016.0.0.8" )]

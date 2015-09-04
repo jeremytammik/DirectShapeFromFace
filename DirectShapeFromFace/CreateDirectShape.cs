@@ -122,6 +122,16 @@ namespace DirectShapeFromFace
     {
       string s = "reusing";
 
+      // If we could reliably set the sketch plane Name
+      // property or find some other relaible marker 
+      // that is reflected in a parameter, we could 
+      // replace the sketchPlane.Name.Equals check in
+      // SketchPlaneMatches by a parameter filter in
+      // the filtered element collector framework
+      // to move the test into native Revit code 
+      // instead of post-processing in .NET, which
+      // would give a 50% performance enhancement.
+
       SketchPlane sketchPlane
         = new FilteredElementCollector( doc )
           .OfClass( typeof( SketchPlane ) )
@@ -185,6 +195,8 @@ namespace DirectShapeFromFace
       Debug.Print( "enter GetTransformStackForObject "
         + "with tstack count {0}", tstack.Count );
 
+      bool found = false;
+
       foreach( GeometryObject obj in geo )
       {
         GeometryInstance gi = obj as GeometryInstance;
@@ -193,9 +205,15 @@ namespace DirectShapeFromFace
         {
           tstack.Push( gi.Transform );
 
-          return GetTransformStackForObject( tstack,
+          found = GetTransformStackForObject( tstack,
             gi.GetSymbolGeometry(), doc,
             stable_representation );
+
+          if( found ) { return found; }
+
+          tstack.Pop();
+
+          continue;
         }
 
         Solid solid = obj as Solid;
@@ -207,35 +225,36 @@ namespace DirectShapeFromFace
           bool isFace = stable_representation.EndsWith(
             "SURFACE" );
 
-          if( isFace )
-          {
-            if( 0 < solid.Faces.Size )
-            {
-              foreach( Face face in solid.Faces )
-              {
-                rep = face.Reference
-                  .ConvertToStableRepresentation( doc );
+          bool isEdge = stable_representation.EndsWith(
+            "LINEAR" );
 
-                if( rep.Equals( stable_representation ) )
-                {
-                  return true;
-                }
+          Debug.Assert( isFace || isEdge,
+            "GetTransformStackForObject currently only supports faces and edges" );
+
+          if( isFace && 0 < solid.Faces.Size )
+          {
+            foreach( Face face in solid.Faces )
+            {
+              rep = face.Reference
+                .ConvertToStableRepresentation( doc );
+
+              if( rep.Equals( stable_representation ) )
+              {
+                return true;
               }
             }
           }
-          else
-          {
-            if( 0 < solid.Edges.Size )
-            {
-              foreach( Edge edge in solid.Edges )
-              {
-                rep = edge.Reference
-                  .ConvertToStableRepresentation( doc );
 
-                if( rep.Equals( stable_representation ) )
-                {
-                  return true;
-                }
+          if( isEdge && 0 < solid.Edges.Size )
+          {
+            foreach( Edge edge in solid.Edges )
+            {
+              rep = edge.Reference
+                .ConvertToStableRepresentation( doc );
+
+              if( rep.Equals( stable_representation ) )
+              {
+                return true;
               }
             }
           }
@@ -262,6 +281,9 @@ namespace DirectShapeFromFace
 
         string rep = faceref
           .ConvertToStableRepresentation( doc );
+
+        Debug.Assert( rep.EndsWith( ":SURFACE" ), 
+          "expected stable representation to end with SURFACE" );
 
         Debug.Print( "Face reference picked: "
           + rep );
