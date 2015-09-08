@@ -1,4 +1,5 @@
-﻿using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.ApplicationServices;
+using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System;
@@ -149,10 +150,13 @@ namespace DirectShapeFromFace
         //  "{0} {1}", _sketch_plane_name_prefix,
         //  _sketch_plane_creation_counter++ );
 
+        ++_sketch_plane_creation_counter;
+
         s = "created";
       }
-      Debug.Print( "GetSketchPlane: {0} '{1}'",
-        s, sketchPlane.Name );
+      Debug.Print( "GetSketchPlane: {0} '{1}' ({2})",
+        s, sketchPlane.Name,
+        _sketch_plane_creation_counter );
 
       return sketchPlane;
     }
@@ -268,8 +272,8 @@ namespace DirectShapeFromFace
     {
       Transaction trans = null;
 
-      UIDocument uidoc = commandData.Application.ActiveUIDocument;
-
+      UIApplication uiapp = commandData.Application;
+      UIDocument uidoc = uiapp.ActiveUIDocument;
       Document doc = uidoc.Document;
 
       try
@@ -282,7 +286,7 @@ namespace DirectShapeFromFace
         string rep = faceref
           .ConvertToStableRepresentation( doc );
 
-        Debug.Assert( rep.EndsWith( ":SURFACE" ), 
+        Debug.Assert( rep.EndsWith( ":SURFACE" ),
           "expected stable representation to end with SURFACE" );
 
         Debug.Print( "Face reference picked: "
@@ -329,16 +333,21 @@ namespace DirectShapeFromFace
             // This also works for some instances
             // but not all.
 
-            Transform t1 = fi.GetTotalTransform();
+            //Transform t1 = fi.GetTotalTransform();
 
             Options opt = new Options();
             opt.ComputeReferences = true;
-            GeometryElement geo = el.get_Geometry( opt );
-            GeometryElement geo2 = geo.GetTransformed( Transform.Identity );
-            Stack<Transform> tstack = new Stack<Transform>();
 
-            if( GetTransformStackForObject( tstack, geo, doc, rep )
-              && 0 < tstack.Count )
+            GeometryElement geo = el.get_Geometry( opt );
+
+            GeometryElement geo2 = geo.GetTransformed( 
+              Transform.Identity );
+
+            Stack<Transform> tstack 
+              = new Stack<Transform>();
+
+            if( GetTransformStackForObject( tstack, 
+              geo, doc, rep ) && 0 < tstack.Count )
             {
               Debug.Print( "GetTransformStackForObject "
                 + "returned true with tstack count {0}",
@@ -360,26 +369,6 @@ namespace DirectShapeFromFace
             mesh = mesh.get_Transformed( t );
           }
 
-          //List<XYZ> args = new List<XYZ>( 3 );
-
-          XYZ offset = new XYZ();
-
-          if( el.Location is LocationPoint )
-          {
-            LocationPoint locationPoint = el.Location
-              as LocationPoint;
-
-            offset = locationPoint.Point;
-          }
-
-          /*
-          if (el.Location is LocationCurve)
-          {
-            LocationCurve locationCurve = el.Location as LocationCurve;
-            offset = locationCurve.Curve.GetEndPoint(0);
-          }
-          */
-
           XYZ[] triangleCorners = new XYZ[3];
 
           for( int i = 0; i < mesh.NumTriangles; i++ )
@@ -396,15 +385,6 @@ namespace DirectShapeFromFace
               doc, triangleCorners[0], normal );
 
             DrawModelLineLoop( sketchPlane, triangleCorners );
-
-            //p0 = p0.Add( offset );
-            //p1 = p1.Add( offset );
-            //p2 = p2.Add( offset );
-
-            //args.Clear();
-            //args.Add( p0 );
-            //args.Add( p1 );
-            //args.Add( p2 );
 
             TessellatedFace tesseFace
               = new TessellatedFace( triangleCorners,
@@ -447,4 +427,3 @@ namespace DirectShapeFromFace
     }
   }
 }
-
