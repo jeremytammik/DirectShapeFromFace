@@ -340,13 +340,13 @@ namespace DirectShapeFromFace
 
             GeometryElement geo = el.get_Geometry( opt );
 
-            GeometryElement geo2 = geo.GetTransformed( 
+            GeometryElement geo2 = geo.GetTransformed(
               Transform.Identity );
 
-            Stack<Transform> tstack 
+            Stack<Transform> tstack
               = new Stack<Transform>();
 
-            if( GetTransformStackForObject( tstack, 
+            if( GetTransformStackForObject( tstack,
               geo, doc, rep ) && 0 < tstack.Count )
             {
               Debug.Print( "GetTransformStackForObject "
