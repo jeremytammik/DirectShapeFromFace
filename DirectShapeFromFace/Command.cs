@@ -25,6 +25,7 @@ namespace DirectShapeFromFace
           };
       dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink1, "Initial shape builder");
       dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink2, "Jeremy's shape builder");
+      dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink3, "Simple shape builder");
       switch (dialog.Show())
       {
           case TaskDialogResult.CommandLink1:
@@ -32,6 +33,10 @@ namespace DirectShapeFromFace
               break;
           case TaskDialogResult.CommandLink2:
               CreateDirectShape.Execute(commandData);
+              break;
+          
+          case TaskDialogResult.CommandLink3:
+              CreateDirectShapeSimple.Execute(commandData);
               break;
       }
 
