@@ -2,7 +2,9 @@
 
 Revit add-in that creates a DirectShape element from a selected element face.
 
-Documentation is provided by [The Building Coder](http://thebuildingcoder.typepad.com).
+Documentation is provided by
+[The Building Coder](http://thebuildingcoder.typepad.com) in the discussion on
+[DirectShape from face and sketch plane reuse](http://thebuildingcoder.typepad.com/blog/2015/09/directshape-from-face-and-sketch-plane-reuse.html).
 
 
 ## Author
