@@ -27,6 +27,21 @@ namespace DirectShapeFromFace
         Element el = doc.GetElement(
           reference.ElementId );
 
+        Face face = el.GetGeometryObjectFromReference(
+          reference ) as Face;
+
+        Mesh mesh = face.Triangulate();
+
+        var familyInstance = el as FamilyInstance;
+
+        if( null != familyInstance )
+        {
+          var t = familyInstance
+            .GetTotalTransform();
+
+          mesh = mesh.get_Transformed( t );
+        }
+
         using( Transaction trans = new Transaction( doc ) )
         {
           trans.Start( "Create DirectShape from Face" );
@@ -36,38 +51,20 @@ namespace DirectShapeFromFace
 
           builder.OpenConnectedFaceSet( false );
 
-          Face face = el.GetGeometryObjectFromReference(
-            reference ) as Face;
-
-          Mesh mesh = face.Triangulate();
           List<XYZ> args = new List<XYZ>( 3 );
 
-          var familyInstance = el as FamilyInstance;
-
-          var transform = familyInstance != null
-            ? familyInstance.GetTotalTransform()
-            : Transform.Identity;
+          XYZ[] triangleCorners = new XYZ[3];
 
           for( int i = 0; i < mesh.NumTriangles; ++i )
           {
-            MeshTriangle triangle 
-              = mesh.get_Triangle( i );
+            MeshTriangle triangle = mesh.get_Triangle( i );
 
-            XYZ p1 = triangle.get_Vertex( 0 );
-            XYZ p2 = triangle.get_Vertex( 1 );
-            XYZ p3 = triangle.get_Vertex( 2 );
-
-            p1 = transform.OfPoint( p1 );
-            p2 = transform.OfPoint( p2 );
-            p3 = transform.OfPoint( p3 );
-
-            args.Clear();
-            args.Add( p1 );
-            args.Add( p2 );
-            args.Add( p3 );
+            triangleCorners[0] = triangle.get_Vertex( 0 );
+            triangleCorners[1] = triangle.get_Vertex( 1 );
+            triangleCorners[2] = triangle.get_Vertex( 2 );
 
             TessellatedFace tesseFace
-              = new TessellatedFace( args,
+              = new TessellatedFace( triangleCorners,
                 ElementId.InvalidElementId );
 
             if( builder.DoesFaceHaveEnoughLoopsAndVertices(

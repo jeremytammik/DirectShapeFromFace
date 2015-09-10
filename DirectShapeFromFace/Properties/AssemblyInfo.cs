@@ -48,6 +48,7 @@ using System.Runtime.InteropServices;
 // 2015-09-10 2016.0.0.10 merged alex' pull request #1
 // 2015-09-10 2016.0.0.11 integrated alex' simple shape builder pull request #1
 // 2015-09-10 2016.0.0.12 encapsulate transaction in 'using' statement
+// 2015-09-10 2016.0.0.13 further simplification, transform entire mesh instead of individual vertex
 //
-[assembly: AssemblyVersion( "2016.0.0.12" )]
-[assembly: AssemblyFileVersion( "2016.0.0.12" )]
+[assembly: AssemblyVersion( "2016.0.0.13" )]
+[assembly: AssemblyFileVersion( "2016.0.0.13" )]
