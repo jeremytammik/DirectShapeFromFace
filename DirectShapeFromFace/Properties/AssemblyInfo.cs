@@ -45,6 +45,9 @@ using System.Runtime.InteropServices;
 // 2015-09-03 2016.0.0.7 reuse of '<not associated>' sketch plane works fine
 // 2015-09-04 2016.0.0.8 added better check for face or edge searching geometric target element
 // 2015-09-08 2016.0.0.9 added debug log of sketch plane counter and removed commented code
+// 2015-09-10 2016.0.0.10 merged alex' pull request #1
+// 2015-09-10 2016.0.0.11 integrated alex' simple shape builder pull request #1
+// 2015-09-10 2016.0.0.12 encapsulate transaction in 'using' statement
 //
-[assembly: AssemblyVersion( "2016.0.0.9" )]
-[assembly: AssemblyFileVersion( "2016.0.0.9" )]
+[assembly: AssemblyVersion( "2016.0.0.12" )]
+[assembly: AssemblyFileVersion( "2016.0.0.12" )]
