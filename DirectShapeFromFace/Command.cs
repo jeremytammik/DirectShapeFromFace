@@ -19,7 +19,21 @@ namespace DirectShapeFromFace
       ref string message,
       ElementSet elements )
     {
-      CreateDirectShape.Execute( commandData );
+      var dialog = new TaskDialog("Create direct shape")
+          {
+              MainInstruction = "Select the way, you want to create shape"
+          };
+      dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink1, "Initial shape builder");
+      dialog.AddCommandLink(TaskDialogCommandLinkId.CommandLink2, "Jeremy's shape builder");
+      switch (dialog.Show())
+      {
+          case TaskDialogResult.CommandLink1:
+              CreateDirectShapeInitial.Execute1(commandData);
+              break;
+          case TaskDialogResult.CommandLink2:
+              CreateDirectShape.Execute(commandData);
+              break;
+      }
 
       return Result.Succeeded;
     }
