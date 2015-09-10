@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="CreateDirectShape.cs" />
+    <Compile Include="CreateDirectShapeInitial.cs" />
+    <Compile Include="CreateDirectShapeSimple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
