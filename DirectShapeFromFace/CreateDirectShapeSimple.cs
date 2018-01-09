@@ -76,19 +76,34 @@ namespace DirectShapeFromFace
 
           builder.CloseConnectedFaceSet();
 
-          TessellatedShapeBuilderResult result
-            = builder.Build(
-              TessellatedShapeBuilderTarget.AnyGeometry,
-              TessellatedShapeBuilderFallback.Mesh,
-              ElementId.InvalidElementId );
+          //TessellatedShapeBuilderResult result
+          //  = builder.Build(
+          //    TessellatedShapeBuilderTarget.AnyGeometry,
+          //    TessellatedShapeBuilderFallback.Mesh,
+          //    ElementId.InvalidElementId ); // 2016
+
+          builder.Target = TessellatedShapeBuilderTarget.AnyGeometry; // 2018
+          builder.Fallback = TessellatedShapeBuilderFallback.Mesh; // 2018
+
+          builder.Build(); // 2018
+
+          TessellatedShapeBuilderResult result = builder.GetBuildResult(); // 2018
 
           ElementId categoryId = new ElementId(
             BuiltInCategory.OST_GenericModel );
 
+          //DirectShape ds = DirectShape.CreateElement(
+          //  doc, categoryId,
+          //  Assembly.GetExecutingAssembly().GetType()
+          //    .GUID.ToString(), Guid.NewGuid().ToString() ); // 2016
+
           DirectShape ds = DirectShape.CreateElement(
-            doc, categoryId,
-            Assembly.GetExecutingAssembly().GetType()
-              .GUID.ToString(), Guid.NewGuid().ToString() );
+            doc, categoryId ); // 2018
+
+          ds.ApplicationId = Assembly.GetExecutingAssembly()
+            .GetType().GUID.ToString(); // 2018
+
+          ds.ApplicationDataId = Guid.NewGuid().ToString(); // 2018
 
           ds.SetShape( result.GetGeometricalObjects() );
 
