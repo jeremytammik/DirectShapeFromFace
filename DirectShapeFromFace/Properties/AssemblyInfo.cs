@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "Autodesk Inc." )]
 [assembly: AssemblyProduct( "DirectShapeFromFace Revit Add-In" )]
-[assembly: AssemblyCopyright( "Copyright 2015 © Jeremy Tammik Autodesk Inc." )]
+[assembly: AssemblyCopyright( "Copyright 2015-2018 © Jeremy Tammik Autodesk Inc." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -49,6 +49,7 @@ using System.Runtime.InteropServices;
 // 2015-09-10 2016.0.0.11 integrated alex' simple shape builder pull request #1
 // 2015-09-10 2016.0.0.12 encapsulate transaction in 'using' statement
 // 2015-09-10 2016.0.0.13 further simplification, transform entire mesh instead of individual vertex
+// 2018-01-09 2018.0.0.0 flat migration to Revit 2018
 //
-[assembly: AssemblyVersion( "2016.0.0.13" )]
-[assembly: AssemblyFileVersion( "2016.0.0.13" )]
+[assembly: AssemblyVersion( "2018.0.0.0" )]
+[assembly: AssemblyFileVersion( "2018.0.0.0" )]
